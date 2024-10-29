@@ -1,0 +1,261 @@
+<?php if ( isset($error) && $error ):?>
+<div id="message" class="error fade"><p><strong><?php echo $error?></strong></p></div>
+<?php elseif ( isset($message) && $message ):?>
+<div id="message" class="updated fade"><p><strong><?php echo $message?></strong></p></div>
+<?php endif;?>
+<script type="text/javascript">
+function s3_selectBucket(obj) {
+    if (obj.options[obj.selectedIndex].value == 'new') {
+        var bucket = prompt("Bucket name: ");
+        if (bucket) {
+            var len = obj.options.length
+            obj.options[len] = new Option("New bucket: " + bucket, bucket);
+            obj.options[len].selected = true;
+        }
+    }
+}
+</script>
+<!--
+<style type="text/css">
+div.album {
+    float:left;
+    width:200px;
+    height:150px;
+    margin-right:15px;
+}
+div.album td {
+    font-size:0.9em;
+}
+div.album-hidden img {
+    opacity:0.5;
+}
+.form-table {
+	max-width: 850px;
+	float: left;
+	clear: none;
+	margin: 0 40px 20px 0;
+}
+.form-table th h3 {
+	margin: 0;
+}
+.wps3-author {
+	width: 250px;
+	float: left;
+	padding: 20px;
+	border: 1px solid #ccc;
+	overflow: hidden;
+	margin: 0 0 40px 0;
+}
+.wps3-author img {
+	float: left;
+	margin-right: 20px;
+	border-radius: 32px;
+}
+.wps3-author .desc {
+	float: left;
+}
+.wps3-author h3 {
+	font-size: 12px;
+	margin: 0;
+}
+.wps3-author h2 {
+	font-size: 18px;
+	margin: 0;
+	padding: 0;
+}
+.wps3-author h2 a {
+	color: #464646;
+	text-decoration: none;
+}
+.wps3-author h2 a:hover {
+	color: #000;
+}
+.wps3-author p {
+	margin: 0;
+}
+.wps3-author .github {
+	padding-top: 5px;
+}
+</style>
+-->
+
+<div class="wrap">
+
+    <h2 id="write-post">Aurora Objects For Wordpress</h2>
+
+    <div class="separator"></div>
+
+    <div class="postbox-container" style="width:600px; padding: 0 20px 0 0;">
+
+        <form method="post">
+        <input type="hidden" name="action" value="save" />
+
+        <h3>Aurora Objects Inloggegevens</h3>
+        <p>
+            Als u nog geen Aurora Objects account heeft, kan u zich aanmelden bij 
+            <a href="https://pcextreme.nl/" target="_blank">PCextreme</a>.
+        </p>
+
+        <p>
+            
+        </p>
+
+        <label class="textinput" for="access_key_id">Access Key:</label>
+        <input class="textinput" type="text" id="access_key_id" name="options[key]" value="<?php echo $options['key'];?>" />
+        <br class="clear" />
+        <label class="textinput" for="secret_access_key">Secret Access Key:</label>
+        <input class="textinput" type="text" id="secret_access_key" name="options[secret]" value="<?php echo ($options['secret'] ? '-- not shown --' : '');?>" />
+        <br class="clear" />
+        <!--
+        <p class="desc label">These are the image and description used in the OpenGraph meta tags on the frontpage of your site.</p>
+        -->
+        <div class="separator"></div>
+
+        <?php if (!isset($buckets) || !$buckets):?>
+
+            <input type="submit" class="button button-primary" value="Next Step" />
+
+        <?php else: ?>
+
+        <h3>S3 Bucket</h3>
+        <label class="select" for="s3_bucket">Choose an S3 bucket:</label>
+        <select class="select" id="s3_bucket" name="options[bucket]" size="1" onchange="return s3_selectBucket(this)" style="margin-bottom: 5px; width: 380px;">
+            <option value="">-- Selecteer een Aurora Objects Bucket --</option>
+            <?php if (is_array($buckets)) foreach ($buckets as $bucket):?>
+            <option value="<?php echo $bucket?>" <?php echo ( isset( $options['bucket'] ) && $bucket == $options['bucket'] ) ? 'selected="selected"' : ''; ?>><?php echo $bucket?></option>
+            <?php endforeach;?>
+            <option value="new">Maak een nieuwe bucket...</option>
+        </select>
+        <br class="clear" />
+        <p class="desc label">Veld leeglaten om files te reversen</p>
+        <div class="separator"></div>
+
+        <h3>Activeer Aurora Objects</h3>
+        <input class="checkbox double" type="checkbox" id="wp-uploads" name="options[wp-uploads]" value="1" <?php echo ( isset( $options['wp-uploads'] ) && $options['wp-uploads'] ) ? 'checked="checked" ' : ''; ?> />
+        <label for="wp-uploads">Activeer het opslaan van mijn media op Aurora Objects</label>
+        <br class="clear" />
+        <p class="desc">Mocht u geen gebruik meer willen maken van Aurora Objects, kan u dit vinkje verwijderen.</p>
+        <div class="separator"></div>
+
+        <p class="submit">
+            <input type="submit" class="submit button button-primary" value="Wijzigingen Opslaan" />
+        </p>
+
+        <!--
+        <table class="form-table">
+        <tr valign="top">
+        <td colspan="2">
+            <h3>Aurora Objects For Wordpress</h3>
+            <p>
+                If you don't have an Amazon S3 account yet, you need to
+                <a href="http://aws.amazon.com/s3/">sign up</a>.
+            </p>
+
+            <p>
+                Once you've signed up, you can retrieve your access credentials from the
+                <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials">Security Credentials</a>
+                page of your Amazon Web Services account.
+            </p>
+        </td>
+        </tr>
+        <tr valign="top">
+        <th width="33%" scope="row">Access Key ID:</th>
+        <td><input type="text" name="options[key]" value="<?php echo $options['key'];?>" size="50" /></td>
+        </tr>
+        <tr valign="top">
+        <th width="33%" scope="row">Secret Access Key:</th>
+        <td><input type="text" name="options[secret]" value="<?php echo ($options['secret'] ? '-- not shown --' : '');?>" size="50" /></td>
+        </tr>
+        <?php if (!isset($buckets) || !$buckets):?>
+        <tr valign="top">
+        <td colspan="2">
+        <p class="submit">
+        <input type="submit" class="button button-primary" value="Next Step" />
+        </p>
+        </td>
+        </tr>
+        <?php else:?>
+            <tr valign="top">
+            <td colspan="2">
+                <h3>S3 Settings</h3>
+            </td>
+            </tr>
+            <tr valign="top">
+            <td width="33%" scope="row">
+                Choose an S3 bucket
+            </td>
+            <td>
+                <select name="options[bucket]" size="1" onchange="return s3_selectBucket(this)" style="margin-bottom: 5px; width: 380px;">
+                <option value="">-- Select an S3 Bucket --</option>
+                <?php if (is_array($buckets)) foreach ($buckets as $bucket):?>
+                    <option value="<?php echo $bucket?>" <?php echo ( isset( $options['bucket'] ) && $bucket == $options['bucket'] ) ? 'selected="selected"' : ''; ?>><?php echo $bucket?></option>
+                <?php endforeach;?>
+                <option value="new">Create a new bucket...</option>
+                </select><br />
+
+                <input type="checkbox" name="options[virtual-host]" value="1" id="virtual-host" <?php echo ( isset( $options['virtual-host'] ) && $options['virtual-host'] ) ? 'checked="checked" ' : '';?> />
+                <label for="virtual-host"> Bucket is setup for virtual hosting</label> (<a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/VirtualHosting.html">more info</a>)
+                <br />
+
+                <input type="checkbox" name="options[expires]" value="315360000" id="expires" <?php echo ( isset( $options['expires'] ) && $options['expires'] ) ? 'checked="checked" ' : ''; ?> />
+                <label for="expires"> Set a <a href="http://developer.yahoo.com/performance/rules.html#expires" target="_blank">far future HTTP expiration header</a> for uploaded files <em>(recommended)</em></label>
+                <br />
+
+                <input type="checkbox" name="options[permissions]" value="public" id="permissions" <?php echo ( isset( $options['permissions'] ) && $options['permissions'] == 'public' ) ? 'checked="checked" ' : ''; ?> />
+                <label for="permissions"> Force set the permissions on all files in the bucket to public</label>
+
+            </td>
+            </tr>
+
+            <tr valign="top">
+            <td colspan="2">
+                <h3>CloudFront Settings</h3>
+            </td>
+            </tr>
+            <tr valign="top">
+            <th width="33%" scope="row">Domain Name</th>
+            <td>
+                <input type="text" name="options[cloudfront]" value="<?php echo isset( $options['cloudfront'] ) ? $options['cloudfront'] : ''; ?>" size="50" />
+                <p class="description">Leave blank if you aren't using CloudFront.</p>
+            </td>
+            </tr>
+
+            <tr valign="top">
+            <td colspan="2">
+                <h3>Plugin Settings</h3>
+            </td>
+            </tr>
+
+            <tr valign="top">
+            <th width="33%" scope="row">&nbsp;</th>
+            <td>
+                <input type="checkbox" name="options[wp-uploads]" value="1" id="wp-uploads" <?php echo ( isset( $options['wp-uploads'] ) && $options['wp-uploads'] ) ? 'checked="checked" ' : ''; ?> />
+                <label for="wp-uploads"> Enable copying of media files to S3 and serving media files from S3/CloudFront</label>
+                <p class="description">Uncheck this to revert back to using your own web host for storage and delivery at anytime.</p>
+            </td>
+            </tr>
+
+        <tr>
+        <td colspan="2">
+        <p class="submit">
+        <input type="submit" class="button button-primary" value="Save Changes" />
+        </p>
+        </td>
+        </tr>
+        <?php endif;?>
+            </table>
+
+        -->
+
+        <?php endif;?>
+        </form>
+
+    </div>
+
+    <div class="postbox-container" style="width:300px; margin-left:30px">
+
+        <div id="sidebar">
+
+        </div>
+    </div>
+</div>
